@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mini Imperios</title>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="top">
+  <span id="rFood" title="Comida">🍖 0</span>
+  <span id="rWood" title="Madera">🪵 0</span>
+  <span id="rGold" title="Oro">🪙 0</span>
+  <span id="rPop" title="Población">👥 0/0</span>
+  <span id="rAge" title="Edad">🏛️ Aldea</span>
+  <span id="clock">0:00</span>
+  <span id="snd" title="Sonido (M)">🔊</span>
+</div>
+<div id="toast"></div>
+
+<div id="bottom">
+  <canvas id="mini" width="160" height="160"></canvas>
+  <div id="info"></div>
+  <div id="cmds"></div>
+</div>
+
+<div id="menu" class="overlay">
+  <div class="card">
+    <h1>⚔️ Mini Imperios</h1>
+    <p class="sub">Construye tu aldea, avanza de edad, arma un ejército y destruye todos los edificios enemigos.</p>
+    <div class="diff">
+      <button data-d="easy">Fácil</button>
+      <button data-d="normal" class="sel">Normal</button>
+      <button data-d="hard">Difícil</button>
+    </div>
+    <button id="play" class="big">¡Jugar!</button>
+    <ul class="help">
+      <li><b>Click izq</b> seleccionar / arrastrar para caja · doble click = todos del mismo tipo</li>
+      <li><b>Click der</b> mover, recolectar, construir, atacar (o punto de reunión en edificios)</li>
+      <li><b>Flechas / bordes</b> mover cámara · <b>rueda</b> zoom · <b>H</b> a tu base · <b>.</b> aldeano libre</li>
+      <li><b>Q W E R T Y U</b> botones del panel · <b>A</b>+click atacar-mover · <b>S</b> detener · <b>Esc</b> cancelar · <b>P</b> pausa · <b>M</b> sonido</li>
+      <li>Niebla de guerra: explora para ver al enemigo. Sube de edad en el Centro Urbano para desbloquear Establo, Herrería, Torres y Asedio.</li>
+    </ul>
+  </div>
+</div>
+
+<div id="end" class="overlay hidden">
+  <div class="card">
+    <h1 id="endTitle"></h1>
+    <p class="sub" id="endSub"></p>
+    <button id="again" class="big">Jugar de nuevo</button>
+  </div>
+</div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
