@@ -21,3 +21,11 @@ export function run() {
     out.textContent = JSON.stringify({ simSeconds: Math.round(t), ms: Date.now() - t0, state: S.g.state, age: S.AGE, upgrades: S.UPD.map(s => [...s]), p0: by(0), p1: by(1), res: S.R, kinds, bkinds, errs });
   } catch (e) { out.textContent = 'ERROR ' + e.stack; }
 }
+
+// /?demo: arranca una partida normal ya avanzada y con el centro urbano seleccionado (para capturas)
+export function demo() {
+  newGame('normal');
+  for (let i = 0; i < 600; i++) update(0.05);
+  S.sel = [S.blds.find(b => b.team === 0 && b.t === 'tc')];
+  S.R[0].food = 500; S.R[0].gold = 300;
+}

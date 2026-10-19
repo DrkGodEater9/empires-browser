@@ -2,8 +2,10 @@
 import { AGES, BLDS, UNITS, UPG, BUILD_MENU } from '../config/data.js';
 import { S } from '../core/state.js';
 import { emit, on } from '../core/events.js';
-import { canPay, costStr, train, startAdvance, startResearch, canResearch } from '../systems/economy.js';
+import { canPay, train, startAdvance, startResearch, canResearch } from '../systems/economy.js';
 import { own, cmdStop } from '../systems/orders.js';
+import { svg } from '../assets/icons.js';
+import { costHtml } from './hud.js';
 
 const $ = id => document.getElementById(id);
 let cmds = [], modeKey = '';
@@ -17,8 +19,8 @@ export function startPlace(t) {
   S.ui.place = { t }; S.ui.amode = false;
 }
 
-const STOP = { k: 'S', ic: '✋', nm: 'Detener', act: () => own().forEach(e => e.kind === 'unit' && cmdStop(e)) };
-const AMOVE = { k: 'A', ic: '🎯', nm: 'Atacar-mover', act: () => { S.ui.amode = true; S.ui.place = null; } };
+const STOP = { k: 'S', ic: 'stop', nm: 'Detener', act: () => own().forEach(e => e.kind === 'unit' && cmdStop(e)) };
+const AMOVE = { k: 'A', ic: 'target', nm: 'Atacar-mover', act: () => { S.ui.amode = true; S.ui.place = null; } };
 const KEYS = 'QWERTYU';
 
 function trainCmd(bt, t, i) {
@@ -39,7 +41,7 @@ function buildCmds(mode) {
   }));
   const list = d.train.map((t, i) => trainCmd(bt, t, i));
   if (bt === 'tc') list.push({
-    k: KEYS[list.length], ic: '🏛️', nm: AGES[S.AGE[0]] ? 'Edad ' + AGES[S.AGE[0]].name : 'Edad máxima',
+    k: KEYS[list.length], ic: 'age', nm: AGES[S.AGE[0]] ? 'Edad ' + AGES[S.AGE[0]].name : 'Edad máxima',
     get cost() { return AGES[S.AGE[0]] ? AGES[S.AGE[0]].cost : null; },
     done: () => S.AGE[0] >= AGES.length,
     busy: () => S.blds.some(b => b.team === 0 && b.adv),
@@ -50,9 +52,9 @@ function buildCmds(mode) {
 
 function render() {
   $('cmds').innerHTML = cmds.map((c, i) => {
-    const cost = c.cost ? costStr(c.cost) : '';
-    const lock = c.age > 1 ? ` · 🏛️${AGES[c.age - 1].name}` : '';
-    return `<button data-i="${i}" title="${c.nm}"><span class="k">${c.k}</span><span class="ic">${c.ic}</span><span>${c.nm}</span><span class="cost">${cost}${lock}</span></button>`;
+    const cost = c.cost ? costHtml(c.cost) : '';
+    const lock = c.age > 1 ? `<span class="lock">${AGES[c.age - 1].name}</span>` : '';
+    return `<button data-i="${i}" title="${c.nm}"><span class="k">${c.k}</span><span class="ic">${svg(c.ic, 26)}</span><span class="nm">${c.nm}</span><span class="cost">${cost}${lock}</span></button>`;
   }).join('');
 }
 

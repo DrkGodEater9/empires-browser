@@ -1,4 +1,4 @@
-import { WW, WH, TEAM_COL, BOTTOM_BAR } from '../config/constants.js';
+import { WW, WH, TEAM_COL } from '../config/constants.js';
 import { S } from '../core/state.js';
 import { centerOn } from '../core/camera.js';
 import { seen, bexp, fog } from '../systems/fog.js';
@@ -19,7 +19,7 @@ export function renderMini() {
   for (const b of S.blds) { if (!bexp(b)) continue; mctx.fillStyle = TEAM_COL[b.team]; mctx.fillRect(b.x * 32 * SC, b.y * 32 * SC, b.w * 32 * SC + 1, b.h * 32 * SC + 1); }
   for (const u of S.units) { if (!seen(u)) continue; mctx.fillStyle = TEAM_COL[u.team]; mctx.fillRect(u.x * SC - 1, u.y * SC - 1, 2.5, 2.5); }
   mctx.strokeStyle = '#fff'; mctx.lineWidth = 1;
-  mctx.strokeRect(S.cam.x * SC, S.cam.y * SC, S.view.w / S.cam.z * SC, (S.view.h - BOTTOM_BAR) / S.cam.z * SC);
+  mctx.strokeRect(S.cam.x * SC, S.cam.y * SC, S.view.w / S.cam.z * SC, S.view.h / S.cam.z * SC);
 }
 
 // coordenadas del mundo bajo un evento de mouse sobre el minimapa

@@ -108,7 +108,7 @@ export function updateBld(b, dt) {
     b.adv.p += dt;
     if (b.adv.p >= b.adv.time) {
       S.AGE[T] = b.adv.to; b.adv = null;
-      if (T === 0) { emit('toast', '🏛️ ¡Edad ' + AGES[S.AGE[0] - 1].name + '!'); emit('sfx', 'age'); }
+      if (T === 0) { emit('toast', '¡Edad ' + AGES[S.AGE[0] - 1].name + '!'); emit('sfx', 'age'); }
     }
   }
   if (b.rs) { // investigación en herrería

@@ -6,18 +6,19 @@
 <title>Mini Imperios</title>
 </head>
 <body>
-<canvas id="game"></canvas>
-
-<div id="top">
-  <span id="rFood" title="Comida">🍖 0</span>
-  <span id="rWood" title="Madera">🪵 0</span>
-  <span id="rGold" title="Oro">🪙 0</span>
-  <span id="rPop" title="Población">👥 0/0</span>
-  <span id="rAge" title="Edad">🏛️ Aldea</span>
-  <span id="clock">0:00</span>
-  <span id="snd" title="Sonido (M)">🔊</span>
+<div id="stage">
+  <canvas id="game"></canvas>
+  <div id="top">
+    <span id="rFood" class="r-food" title="Comida"><i data-ic="food"></i><b>0</b></span>
+    <span id="rWood" class="r-wood" title="Madera"><i data-ic="wood"></i><b>0</b></span>
+    <span id="rGold" class="r-gold" title="Oro"><i data-ic="coin"></i><b>0</b></span>
+    <span id="rPop" title="Población"><i data-ic="person"></i><b>0/0</b></span>
+    <span id="rAge" title="Edad"><i data-ic="age"></i><b>Aldea</b></span>
+    <span id="clock" title="Tiempo">0:00</span>
+    <button id="snd" title="Sonido (M)" data-ic="speaker" data-s="20"></button>
+  </div>
+  <div id="toast"></div>
 </div>
-<div id="toast"></div>
 
 <div id="bottom">
   <canvas id="mini" width="160" height="160"></canvas>
@@ -27,7 +28,7 @@
 
 <div id="menu" class="overlay">
   <div class="card">
-    <h1>⚔️ Mini Imperios</h1>
+    <h1><i data-ic="swords" data-s="40"></i> Mini Imperios</h1>
     <p class="sub">Construye tu aldea, avanza de edad, arma un ejército y destruye todos los edificios enemigos.</p>
     <div class="diff">
       <button data-d="easy">Fácil</button>

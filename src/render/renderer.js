@@ -1,5 +1,5 @@
 // Render del mundo en el canvas principal.
-import { TS, WW, WH, FARM_FOOD, TEAM_COL, TEAM_DARK, EMOJI } from '../config/constants.js';
+import { TS, WW, WH, FARM_FOOD, TEAM_COL, TEAM_DARK } from '../config/constants.js';
 import { UNITS, BLDS, UPG } from '../config/data.js';
 import { S } from '../core/state.js';
 import { vis, clampCam, screenToWorld } from '../core/camera.js';
@@ -8,20 +8,25 @@ import { validPlace } from '../systems/economy.js';
 import { seen, bexp, fog } from '../systems/fog.js';
 import { SPR, ell } from './sprites.js';
 import { gfx } from './terrain.js';
+import { drawIcon } from '../assets/icons.js';
 
 let cv, ctx;
 
-export function initRenderer(canvas) { cv = canvas; ctx = canvas.getContext('2d'); resize(); window.addEventListener('resize', resize); }
+// el canvas ocupa todo #stage (el área sobre la barra inferior); se redimensiona con él
+export function initRenderer(canvas, stage) {
+  cv = canvas; ctx = canvas.getContext('2d');
+  resize(stage);
+  new ResizeObserver(() => resize(stage)).observe(stage);
+}
 
-export function resize() {
+export function resize(stage) {
   const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-  S.view.dpr = dpr; S.view.w = innerWidth; S.view.h = innerHeight;
+  S.view.dpr = dpr; S.view.w = stage.clientWidth; S.view.h = stage.clientHeight;
   cv.width = Math.floor(S.view.w * dpr); cv.height = Math.floor(S.view.h * dpr);
   if (S.g.state !== 'menu') clampCam();
 }
 
 function bar(x, y, w, f, col) { ctx.fillStyle = '#000a'; ctx.fillRect(x - 1, y - 1, w + 2, 5); ctx.fillStyle = col; ctx.fillRect(x, y, w * Math.max(0, f), 3); }
-function emoji(s, x, y, size) { ctx.font = size + 'px ' + EMOJI; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(s, x, y); }
 
 function drawBld(b) {
   const d = BLDS[b.t], px = b.x * TS, py = b.y * TS, w = b.w * TS, h = b.h * TS;
@@ -39,7 +44,7 @@ function drawBld(b) {
     ctx.fillStyle = TEAM_COL[b.team]; ctx.beginPath();
     ctx.moveTo(px - 1, py + h - bh); ctx.lineTo(px + w / 2, py + 2); ctx.lineTo(px + w + 1, py + h - bh); ctx.closePath(); ctx.fill();
     ctx.fillStyle = '#0003'; ctx.beginPath(); ctx.moveTo(px + w / 2, py + 2); ctx.lineTo(px + w + 1, py + h - bh); ctx.lineTo(px + w / 2, py + h - bh); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = '#fff'; emoji(d.icon, px + w / 2, py + h - bh / 2 - 1, Math.min(w, h) * 0.42);
+    drawIcon(ctx, d.icon, px + w / 2, py + h - bh / 2 - 1, Math.round(Math.min(w, h) * 0.42), '#fff');
   }
   ctx.globalAlpha = 1;
   if (!b.done) bar(px + 4, py - 4, w - 8, b.prog, '#38bdf8');
@@ -58,7 +63,7 @@ function drawUnit(u) {
   if (picked) { ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(u.x, u.y + u.r * 0.6, u.r + 3, u.r * 0.6 + 2, 0, 0, 7); ctx.stroke(); }
   ctx.fillStyle = TEAM_COL[u.team]; ctx.strokeStyle = TEAM_DARK[u.team]; ctx.lineWidth = 2;
   ctx.beginPath(); ctx.arc(u.x, u.y, u.r, 0, 7); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = '#fff'; emoji(UNITS[u.t].icon, u.x, u.y + 1, u.r * 1.3);
+  drawIcon(ctx, UNITS[u.t].icon, u.x, u.y, Math.round(u.r * 1.45), '#fff');
   if (u.carryN > 0 && u.state !== 'idle') { ctx.fillStyle = { wood: '#92400e', food: '#e11d48', gold: '#fbbf24' }[u.carryT]; ctx.fillRect(u.x - 3, u.y - u.r - 6, 6, 5); }
   if (picked || u.hp < u.maxhp) bar(u.x - 9, u.y - u.r - 9, 18, u.hp / u.maxhp, u.hp / u.maxhp > 0.4 ? '#4ade80' : '#ef4444');
 }
@@ -106,7 +111,7 @@ export function render() {
     const tx = Math.round(w.x / TS - d.w / 2), ty = Math.round(w.y / TS - d.h / 2), ok = validPlace(ui.place.t, tx, ty);
     ui.place.tx = tx; ui.place.ty = ty; ui.place.ok = ok;
     ctx.globalAlpha = 0.6; ctx.fillStyle = ok ? '#22c55e' : '#ef4444'; ctx.fillRect(tx * TS, ty * TS, d.w * TS, d.h * TS);
-    ctx.globalAlpha = 1; ctx.fillStyle = '#fff'; emoji(d.icon, (tx + d.w / 2) * TS, (ty + d.h / 2) * TS, 28);
+    ctx.globalAlpha = 1; drawIcon(ctx, d.icon, (tx + d.w / 2) * TS, (ty + d.h / 2) * TS, 28, '#fff');
   }
 
   ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
@@ -115,5 +120,5 @@ export function render() {
     const x = Math.min(dr.x, ui.mouse.x), y = Math.min(dr.y, ui.mouse.y), w = Math.abs(ui.mouse.x - dr.x), h = Math.abs(ui.mouse.y - dr.y);
     ctx.fillStyle = '#4ade8022'; ctx.fillRect(x, y, w, h); ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, y + 0.5, w, h);
   }
-  if (S.g.paused) { ctx.fillStyle = '#0008'; ctx.fillRect(0, 0, view.w, view.h); ctx.fillStyle = '#fff'; emoji('⏸ Pausa', view.w / 2, view.h / 2 - 40, 40); }
+  if (S.g.paused) { ctx.fillStyle = '#0008'; ctx.fillRect(0, 0, view.w, view.h); ctx.fillStyle = '#fff'; ctx.font = '700 40px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('PAUSA', view.w / 2, view.h / 2); }
 }

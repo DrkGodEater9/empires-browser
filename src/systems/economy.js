@@ -1,5 +1,5 @@
 // Recursos, población, entrenamiento, edades, mejoras y construcción.
-import { MAXPOP, RIC } from '../config/constants.js';
+import { MAXPOP } from '../config/constants.js';
 import { UNITS, BLDS, AGES, UPG } from '../config/data.js';
 import { S } from '../core/state.js';
 import { emit } from '../core/events.js';
@@ -10,7 +10,6 @@ const say = (T, msg) => { if (T === 0 && !S.g.test) emit('toast', msg); };
 
 export function canPay(T, cost) { for (const k in cost) if (S.R[T][k] < cost[k]) return false; return true; }
 export function pay(T, cost) { if (!canPay(T, cost)) return false; for (const k in cost) S.R[T][k] -= cost[k]; return true; }
-export const costStr = c => Object.keys(c).map(k => RIC[k] + c[k]).join(' ');
 
 export function calcPop() {
   S.POP = [0, 0]; S.CAP = [0, 0];
@@ -23,7 +22,7 @@ export function train(b, type) {
   const T = b.team, ud = UNITS[type];
   if (!b.done || b.dead || b.queue.length >= 5) return false;
   if (S.AGE[T] < (ud.age || 1)) { say(T, 'Requiere Edad ' + AGES[ud.age - 1].name); return false; }
-  if (S.POP[T] >= S.CAP[T]) { say(T, 'Necesitas más casas 🏠'); return false; }
+  if (S.POP[T] >= S.CAP[T]) { say(T, 'Necesitas más casas'); return false; }
   if (!pay(T, ud.cost)) { say(T, 'Recursos insuficientes'); return false; }
   b.queue.push(type); S.POP[T]++; return true;
 }

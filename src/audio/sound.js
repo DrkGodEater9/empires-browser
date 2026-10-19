@@ -2,6 +2,7 @@
 import { S } from '../core/state.js';
 import { on } from '../core/events.js';
 import { vis } from '../core/camera.js';
+import { svg } from '../assets/icons.js';
 
 const snd = { ctx: null, master: null, mute: false, last: {}, noiseBuf: null };
 const THROTTLE = { hit: 70, arrow: 80, death: 90, crash: 150, build: 350, select: 40, order: 40, click: 30 };
@@ -78,6 +79,7 @@ export function initSound(btn) {
   on('sfx', sfx);
   on('game:start', () => { sfx('click'); startMusic(); });
   on('game:over', win => { stopMusic(); sfx(win ? 'win' : 'lose'); });
-  on('mute:toggle', () => { snd.mute = !snd.mute; btn.textContent = snd.mute ? '🔇' : '🔊'; });
-  btn.addEventListener('click', () => { ensure(); snd.mute = !snd.mute; btn.textContent = snd.mute ? '🔇' : '🔊'; });
+  const toggle = () => { snd.mute = !snd.mute; btn.innerHTML = svg(snd.mute ? 'muted' : 'speaker', 20); };
+  on('mute:toggle', toggle);
+  btn.addEventListener('click', () => { ensure(); toggle(); });
 }

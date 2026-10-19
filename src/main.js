@@ -10,10 +10,10 @@ import { initSound } from './audio/sound.js';
 import { newGame, update } from './systems/game.js';
 
 const $ = id => document.getElementById(id);
-const canvas = $('game'), mini = $('mini');
+const canvas = $('game'), mini = $('mini'), stage = $('stage');
 
 makeSprites();
-initRenderer(canvas);
+initRenderer(canvas, stage);
 initMinimap(mini);
 initHud();
 initCommandPanel();
@@ -47,3 +47,4 @@ requestAnimationFrame(frame);
 
 // test sin interfaz (IA vs IA): index.html?test
 if (location.search.includes('test')) import('./dev/selftest.js').then(m => m.run());
+if (location.search.includes('demo')) import('./dev/selftest.js').then(m => m.demo());

@@ -43,4 +43,4 @@ Regla de capas: `systems/` y `core/` no tocan el DOM; hablan con la UI y el audi
 
 ## Test sin interfaz
 
-Con el servidor corriendo, abrir `/?test` simula una partida IA vs IA y deja el resumen en `<pre id="out">`. `/?test&rich` da recursos abundantes para ejercitar edades, mejoras y unidades avanzadas.
+Con el servidor corriendo, abrir `/?demo` (partida avanzada para capturas) o `/?test` simula una partida IA vs IA y deja el resumen en `<pre id="out">`. `/?test&rich` da recursos abundantes para ejercitar edades, mejoras y unidades avanzadas.

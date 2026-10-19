@@ -18,7 +18,7 @@ function alertPlayer(t) {
   const now = performance.now();
   if (now - S.lastAlert < 8000) return;
   S.lastAlert = now;
-  emit('toast', '⚠️ ¡Te atacan!'); emit('sfx', 'alert');
+  emit('toast', '¡Te atacan!'); emit('sfx', 'alert');
   S.fx.push({ k: 'c', x: cx(t), y: cy(t), t: 0, max: 1.2, c: '#ef4444' });
 }
 

@@ -2,7 +2,7 @@
 import { TS, MW, MH } from '../config/constants.js';
 import { S } from '../core/state.js';
 import { emit } from '../core/events.js';
-import { screenToWorld, clampCam, centerOn } from '../core/camera.js';
+import { screenToWorld, clampCam, centerOn, minZoom } from '../core/camera.js';
 import { cx, cy } from '../core/world.js';
 import { hitTest, rightClickOrder, attackMoveOrder, own } from '../systems/orders.js';
 import { placeBuilding, canPay } from '../systems/economy.js';
@@ -59,7 +59,7 @@ export function initInput(canvas, mini) {
     ui.drag = { x: e.clientX, y: e.clientY, moved: false, shift: e.shiftKey };
   });
   window.addEventListener('mousemove', e => {
-    ui.mouse.x = e.clientX; ui.mouse.y = e.clientY; ui.mouse.in = true;
+    ui.mouse.x = e.clientX; ui.mouse.y = e.clientY; ui.mouse.in = e.target === canvas;
     if (ui.drag && Math.hypot(e.clientX - ui.drag.x, e.clientY - ui.drag.y) > 5) ui.drag.moved = true;
     if (ui.mouse.mini) minimapCenter(e);
   });
@@ -74,7 +74,7 @@ export function initInput(canvas, mini) {
   canvas.addEventListener('wheel', e => {
     e.preventDefault(); if (S.g.state === 'menu') return;
     const w = screenToWorld(e.clientX, e.clientY), cam = S.cam;
-    cam.z = Math.max(0.55, Math.min(1.7, cam.z * (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
+    cam.z = Math.max(minZoom(), Math.min(1.7, cam.z * (e.deltaY < 0 ? 1.1 : 1 / 1.1)));
     cam.x = w.x - e.clientX / cam.z; cam.y = w.y - e.clientY / cam.z; clampCam();
   }, { passive: false });
 
